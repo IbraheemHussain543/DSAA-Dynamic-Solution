@@ -1,5 +1,3 @@
-print("Hello World")
-#constraints
 from pathlib import Path 
 
  
@@ -44,61 +42,10 @@ def score_schedule(schedule):
 
     return total_time, total_cost, total_enjoyment 
 
-def check_schedule(schedule, constraint, max_score, best_schedule, allowed_time, allowed_cost): 
-    time, cost, enjoyment = score_schedule(schedule) 
-    #check if schedule has highest happieness so far 
-    if enjoyment > max_score: 
-
-        #ensure the schedule follows selected constraint and if so make it new best schedule 
-        if constraint == "time": 
-            if time <= allowed_time: 
-                best_schedule = schedule 
-                max_score = enjoyment 
-
-        elif constraint == "cost": 
-            if cost <= allowed_cost: 
-                best_schedule = schedule 
-                max_score = enjoyment 
-
-        else: 
-            if (time <= allowed_time) and (cost <= allowed_cost): 
-                best_schedule = schedule 
-                max_score = enjoyment 
-
-    return max_score, best_schedule
-
-
-def power_set(list): 
-    #define constraints and placeholders for best schedule
-    constraint = "both"
-    allowed_time = int(data[1]) 
-    allowed_cost = int(data[2])   
-    max_score = 0 
-    best_schedule = [] 
-
-    result = [[]] 
-
-    #generate each subset and check it against the current best enjoyment one
-    for i in list: 
-        subsets = [] 
-        for subset in result: 
-            subset = subset + [i] 
-            subsets.append(subset) 
-
-            max_score, best_schedule = check_schedule(subset, constraint, max_score, best_schedule, allowed_time, allowed_cost)
-
-        result.extend(subsets) 
-
-    return best_schedule
 
 data = load_input("input_small.txt") 
 #lookup table of all activities 
 activities = data[3] 
-#generate powersets from the activities and check values for best one 
-best_schedule = power_set(activities) 
 
 
-#final results from brute force check     
-print(best_schedule) 
-time, cost, enjoyment = score_schedule(best_schedule) 
-print(time, cost, enjoyment) 
+
