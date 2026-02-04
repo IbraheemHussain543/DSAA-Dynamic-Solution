@@ -1,10 +1,6 @@
 from pathlib import Path 
 
- 
-
 BASE_DIR = Path(__file__).parent 
-
- 
 
 def load_input(name): 
     # relative file pathing 
@@ -42,10 +38,42 @@ def score_schedule(schedule):
 
     return total_time, total_cost, total_enjoyment 
 
+def create_matrix():
+    matrix = []
+    emptyRow = [" "] * (constraint[1]+1)
 
-data = load_input("input_small.txt") 
-#lookup table of all activities 
-activities = data[3] 
+    emptyRow[0] = 0 #budgets 0 here so always 0
+    firstRow = [0] * (constraint[1]+1) #first row has no assigned item so full of 0s
 
+    matrix.append(firstRow)
+    for row in range(0, (num_acts)):
+        matrix.append(emptyRow)
+
+    return matrix
+
+def pretty_print(matrix):
+    keys = list(activities.keys())
+    #top line helping with visuals and labelling
+    print(f"{" ":<20} {constraint[0]:<10} {"Enjoyment":<10} {" "}")
+    #for each line show the assigned activity except the first which is no activies
+    for index in range(0, len(matrix)):
+        if index == 0:
+            print(f"{" ":<20} {"":<10} {" ":<10} {matrix[index]}")
+        else:
+            curr_act = keys[index-1]
+            print(f"{curr_act:<20} {activities[curr_act][0]:<10} {activities[curr_act][2]:<10} {matrix[index]}")
+
+#load input file
+num_acts, time_allowed, budget_allowed, activities = load_input("input_small.txt") 
+
+num_acts = int(num_acts)
+time_allowed = int(time_allowed)
+budget_allowed = int(budget_allowed)
+constraint = ["Time", time_allowed]
+
+matrix = create_matrix()
+
+pretty_print(matrix)
+    
 
 
