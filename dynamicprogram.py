@@ -18,7 +18,7 @@ def load_input(name):
         line = lines[i].split(" ") 
         data = line[1],line[2],line[3] 
         events[line[0]]=data 
-    return activities, time, budget, events 
+    return int(activities), int(time), int(budget), events 
 
 def score_schedule(schedule): 
     total_time = 0 
@@ -51,25 +51,33 @@ def create_matrix():
 
     return matrix
 
+def parse_matrix(matrix):
+    return
+
 def pretty_print(matrix):
     keys = list(activities.keys())
     #top line helping with visuals and labelling
     print(f"{" ":<20} {constraint[0]:<10} {"Enjoyment":<10} {" "}")
-    #for each line show the assigned activity except the first which is no activies
+    #for each line show the assigned activity except the first which has no activies
     for index in range(0, len(matrix)):
         if index == 0:
+            # the <20 ensure neat formatting by creating a 20 character space for reserved for each variable
             print(f"{" ":<20} {"":<10} {" ":<10} {matrix[index]}")
         else:
             curr_act = keys[index-1]
-            print(f"{curr_act:<20} {activities[curr_act][0]:<10} {activities[curr_act][2]:<10} {matrix[index]}")
+            print(f"{curr_act:<20} {activities[curr_act][0]:<10} {activities[curr_act][constraint[2]]:<10} {matrix[index]}")
 
 #load input file
-num_acts, time_allowed, budget_allowed, activities = load_input("input_small.txt") 
+num_acts, time_allowed, cost_allowed, activities = load_input("input_small.txt") 
 
-num_acts = int(num_acts)
-time_allowed = int(time_allowed)
-budget_allowed = int(budget_allowed)
-constraint = ["Time", time_allowed]
+#chosen = input("Choose time or cost as a constraint: ")
+chosen = "time"
+if chosen in ["time", "t", "Time", "T"]:
+    constraint = ["Time", time_allowed, 2] #this structure contains the name of the constraint, its value, its index in each activities dictionary
+else:
+    constraint = ["Cost", cost_allowed, 1]
+
+print("\n" + constraint[0] + " constraint with a maximum of " + str(constraint[1]) + "\n") 
 
 matrix = create_matrix()
 
