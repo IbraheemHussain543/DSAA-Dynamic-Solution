@@ -70,8 +70,13 @@ def compare(file_name, constraint):
     print(output)
     print(" ")
 
-compare("input_medium.txt", "time")
 
+
+# do comparisons here
+# available input files: | input_small.txt | input_medium.txt | input_large.txt | input_1000.txt |
+# available constraints: | Cost | Time |
+
+compare("input_medium.txt", "time")
 compare("input_small.txt", "cost")
 
 
