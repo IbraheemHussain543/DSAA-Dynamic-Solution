@@ -46,38 +46,33 @@ def create_matrix():
 
 def fill_matrix(matrix):
     keys = list(activities.keys())
-    rows = len(keys) + 1 #safer way of getting number of items
+    rows = len(keys) + 1
     cols = len(matrix[0])
 
     for row in range(1, rows):
         for col in range(1, cols):
-            enjoyment = 0
-            act_index = row - 1 #starts us at the activity assigned to the row we are on
-            allowance = col 
+            curr_act = activities[keys[row - 1]]
+            cost = int(curr_act[constraint[2]])
+            value = int(curr_act[2])
             
-            #go through each activity going down to see if it will fit
-            while act_index != -1:
-                curr_act = activities[keys[act_index]]
-                constraint_value = int(curr_act[constraint[2]])
-                #if we can fit current activity based of constraint do it and update enjoyment and new remaining allowance
-                if allowance >= constraint_value:
-                    allowance -= constraint_value
-                    enjoyment += int(curr_act[2])
-                #drop down to the next activiity to check if it can be fit
-                act_index -= 1
-                
+            #either dont take this item (use value from row above)
+            skip = matrix[row - 1][col]
             
-            #compare current calculated enjoyment with value above in table and choose larger
-            if enjoyment > matrix[row-1][col]:
-                matrix[row][col] = enjoyment
+            #or take this item (if it fits)
+            if col >= cost:
+                take = matrix[row - 1][col - cost] + value
             else:
-                matrix[row][col] = matrix[row-1][col]
+                take = 0
+            
+            #choose the better option
+            matrix[row][col] = max(skip, take)
+    
     return matrix
 
 def extract_solution(matrix):
     rows = len(matrix)   
     cols = len(matrix[0])
-    best_enjoyment = matrix[rows][cols]
+
 
 def pretty_print(matrix):
     keys = list(activities.keys())
@@ -100,7 +95,7 @@ def pretty_print(matrix):
         
 
 #load input file
-num_acts, time_allowed, cost_allowed, activities = load_input("input_custom_2.txt") 
+num_acts, time_allowed, cost_allowed, activities = load_input("input_custom.txt") 
 
 #chosen = input("Choose time or cost as a constraint: ")
 chosen = "time"
@@ -119,6 +114,7 @@ matrix = create_matrix()
 filled_matrix = fill_matrix(matrix)
 
 pretty_print(filled_matrix)
+print(" ")
 print(filled_matrix)
     
 
