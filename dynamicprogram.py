@@ -39,29 +39,24 @@ def score_schedule(schedule):
 
 def create_matrix():
     matrix = []
-
-    firstRow = [0] * (constraint[1]+1) #first row has no assigned item so full of 0s
-
-    matrix.append(firstRow)
-    for row in range(0, (num_acts)):
-        matrix.append([0] * (constraint[1]+1))
-
+    #create as many rows as there are activities and an additional one 
+    for row in range(0, (num_acts)+ 1):
+        matrix.append([0] * (constraint[1]+1)) #created seperately to give each a unique space in memory
     return matrix
 
-def parse_matrix(matrix):
+def fill_matrix(matrix):
     rows = len(matrix)   
     cols = len(matrix[0])
     keys = list(activities.keys())
-
 
     for row in range(1, rows):
         for col in range(1, cols):
             enjoyment = 0
             act_index = row - 1 #starts us at the activity assigned to the row we are on
-            allowance = col
+            allowance = col 
             
+            #go through each activity going down to see if it will fit
             while act_index != -1:
-                #go through each activity going down to see if it will fit
                 curr_act = activities[keys[act_index]]
                 constraint_value = int(curr_act[constraint[2]])
                 #if we can fit current activity based of constraint do it and update enjoyment and new remaining allowance
@@ -77,10 +72,12 @@ def parse_matrix(matrix):
                 matrix[row][col] = enjoyment
             else:
                 matrix[row][col] = matrix[row-1][col]
-    
     return matrix
 
-
+def extract_solution(matrix):
+    rows = len(matrix)   
+    cols = len(matrix[0])
+    best_enjoyment = matrix[rows][cols]
 
 def pretty_print(matrix):
     keys = list(activities.keys())
@@ -89,13 +86,18 @@ def pretty_print(matrix):
     #for each line show the assigned activity except the first which has no activies
     for index in range(0, len(matrix)):
         if index == 0:
+            #turns all the elements in the array into a long string with each of them having a 4 space block reserved
             row_str = " ".join(f"{cell:<4}" for cell in matrix[index])
-            # the <20 ensure neat formatting by creating a 20 character space for reserved for each variable
+            #the <20 ensure neat formatting by creating a 20 character space for reserved for each variable
             print(f"{" ":<20} {"":<10} {" ":<10} {row_str}")
         else:
+            #all other activities after row 0 must have an activity on their left with its constraint value and enjoyment displayed
             curr_act = keys[index-1]
             row_str = " ".join(f"{cell:<4}" for cell in matrix[index])
             print(f"{curr_act:<20} {activities[curr_act][constraint[2]]:<10} {activities[curr_act][2]:<10} {row_str}")
+
+
+        
 
 #load input file
 num_acts, time_allowed, cost_allowed, activities = load_input("input_custom.txt") 
@@ -110,9 +112,10 @@ else:
 print("\n" + constraint[0] + " constraint with a maximum of " + str(constraint[1]) + "\n") 
 
 matrix = create_matrix()
-parsed_matrix = parse_matrix(matrix)
+filled_matrix = fill_matrix(matrix)
 
-pretty_print(parsed_matrix)
+pretty_print(filled_matrix)
+print(filled_matrix)
     
 
 
