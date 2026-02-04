@@ -45,9 +45,9 @@ def create_matrix():
     return matrix
 
 def fill_matrix(matrix):
-    rows = len(matrix)   
-    cols = len(matrix[0])
     keys = list(activities.keys())
+    rows = len(keys) + 1 #safer way of getting number of items
+    cols = len(matrix[0])
 
     for row in range(1, rows):
         for col in range(1, cols):
@@ -84,7 +84,7 @@ def pretty_print(matrix):
     #top line helping with visuals and labelling
     print(f"{" ":<20} {constraint[0]:<10} {"Enjoyment":<10} {" "}")
     #for each line show the assigned activity except the first which has no activies
-    for index in range(0, len(matrix)):
+    for index in range(0, len(keys) + 1):
         if index == 0:
             #turns all the elements in the array into a long string with each of them having a 4 space block reserved
             row_str = " ".join(f"{cell:<4}" for cell in matrix[index])
@@ -100,7 +100,7 @@ def pretty_print(matrix):
         
 
 #load input file
-num_acts, time_allowed, cost_allowed, activities = load_input("input_custom.txt") 
+num_acts, time_allowed, cost_allowed, activities = load_input("input_custom_2.txt") 
 
 #chosen = input("Choose time or cost as a constraint: ")
 chosen = "time"
@@ -108,6 +108,10 @@ if chosen in ["time", "t", "Time", "T"]:
     constraint = ["Time", time_allowed, 0] #this structure contains the name of the constraint, its value, its index in each activities dictionary
 else:
     constraint = ["Cost", cost_allowed, 1]
+
+#warning to ensure file is formated correctly
+if num_acts != len(activities):
+    print("WARNING: File is claiming different number of activities to what was found, are you missing an empty line at the end or is there another formatting issue?")
 
 print("\n" + constraint[0] + " constraint with a maximum of " + str(constraint[1]) + "\n") 
 
