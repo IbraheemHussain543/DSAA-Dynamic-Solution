@@ -101,5 +101,3 @@ def main(file_name, picked_constraint):
     time, cost, enjoyment = score_schedule(best_schedule) 
 
     return best_schedule, time, cost, enjoyment
-
-main("input_small.txt", "time")

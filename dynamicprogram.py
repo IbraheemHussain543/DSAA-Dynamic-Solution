@@ -132,9 +132,9 @@ def main(file_name, chosen):
     total_time, total_cost, total_enjoyment = score_schedule(optimal_schedule)
 
     #for main function to fill in important variables in output
-    constraint_info = [time_allowed, cost_allowed, constraint[0]]
+    constraint_info = [time_allowed, cost_allowed, constraint[0]] #time and cost budgets as well as which was used
 
-    return optimal_schedule, total_time, total_cost, total_enjoyment, constraint_info
+    return optimal_schedule, total_time, total_cost, total_enjoyment, constraint_info, activities
 
 
     
