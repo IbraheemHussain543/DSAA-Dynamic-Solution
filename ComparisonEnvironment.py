@@ -54,7 +54,6 @@ def compare(file_name, constraint):
     Execution Time: {bf_runtime} seconds
 
     --- DYNAMIC PROGRAMMING ALGORITHM ---
-
     Selected Activities:
     {dp_pretty_schedule}
 
