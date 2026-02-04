@@ -29,7 +29,6 @@ def score_schedule(schedule):
     if no_acts == 0: 
         return 0, 0, 0
     #loop through each activity looking up its time, cost and enjoyment value from global table 'activities' 
-
     for index in range(0, no_acts): 
         curr_act_data = activities[schedule[index]] 
         total_time += int(curr_act_data[0]) 
@@ -52,7 +51,16 @@ def create_matrix():
     return matrix
 
 def parse_matrix(matrix):
-    return
+    rows = len(matrix)   
+    cols = len(matrix[0])
+
+
+    for row in range(1, rows):
+        for col in range(1, cols):
+            allowance = col
+
+            if allowance >
+
 
 def pretty_print(matrix):
     keys = list(activities.keys())
@@ -80,6 +88,7 @@ else:
 print("\n" + constraint[0] + " constraint with a maximum of " + str(constraint[1]) + "\n") 
 
 matrix = create_matrix()
+print(len(matrix))
 
 pretty_print(matrix)
     
