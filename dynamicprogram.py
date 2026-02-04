@@ -39,27 +39,47 @@ def score_schedule(schedule):
 
 def create_matrix():
     matrix = []
-    emptyRow = [" "] * (constraint[1]+1)
 
-    emptyRow[0] = 0 #budgets 0 here so always 0
     firstRow = [0] * (constraint[1]+1) #first row has no assigned item so full of 0s
 
     matrix.append(firstRow)
     for row in range(0, (num_acts)):
-        matrix.append(emptyRow)
+        matrix.append([0] * (constraint[1]+1))
 
     return matrix
 
 def parse_matrix(matrix):
     rows = len(matrix)   
     cols = len(matrix[0])
+    keys = list(activities.keys())
 
 
     for row in range(1, rows):
         for col in range(1, cols):
+            enjoyment = 0
+            act_index = row - 1 #starts us at the activity assigned to the row we are on
             allowance = col
+            
+            while act_index != -1:
+                #go through each activity going down to see if it will fit
+                curr_act = activities[keys[act_index]]
+                constraint_value = int(curr_act[constraint[2]])
+                #if we can fit current activity based of constraint do it and update enjoyment and new remaining allowance
+                if allowance >= constraint_value:
+                    allowance -= constraint_value
+                    enjoyment += int(curr_act[2])
+                #drop down to the next activiity to check if it can be fit
+                act_index -= 1
+                
+            
+            #compare current calculated enjoyment with value above in table and choose larger
+            if enjoyment > matrix[row-1][col]:
+                matrix[row][col] = enjoyment
+            else:
+                matrix[row][col] = matrix[row-1][col]
+    
+    return matrix
 
-            if allowance >
 
 
 def pretty_print(matrix):
@@ -69,28 +89,30 @@ def pretty_print(matrix):
     #for each line show the assigned activity except the first which has no activies
     for index in range(0, len(matrix)):
         if index == 0:
+            row_str = " ".join(f"{cell:<4}" for cell in matrix[index])
             # the <20 ensure neat formatting by creating a 20 character space for reserved for each variable
-            print(f"{" ":<20} {"":<10} {" ":<10} {matrix[index]}")
+            print(f"{" ":<20} {"":<10} {" ":<10} {row_str}")
         else:
             curr_act = keys[index-1]
-            print(f"{curr_act:<20} {activities[curr_act][0]:<10} {activities[curr_act][constraint[2]]:<10} {matrix[index]}")
+            row_str = " ".join(f"{cell:<4}" for cell in matrix[index])
+            print(f"{curr_act:<20} {activities[curr_act][constraint[2]]:<10} {activities[curr_act][2]:<10} {row_str}")
 
 #load input file
-num_acts, time_allowed, cost_allowed, activities = load_input("input_small.txt") 
+num_acts, time_allowed, cost_allowed, activities = load_input("input_custom.txt") 
 
 #chosen = input("Choose time or cost as a constraint: ")
 chosen = "time"
 if chosen in ["time", "t", "Time", "T"]:
-    constraint = ["Time", time_allowed, 2] #this structure contains the name of the constraint, its value, its index in each activities dictionary
+    constraint = ["Time", time_allowed, 0] #this structure contains the name of the constraint, its value, its index in each activities dictionary
 else:
     constraint = ["Cost", cost_allowed, 1]
 
 print("\n" + constraint[0] + " constraint with a maximum of " + str(constraint[1]) + "\n") 
 
 matrix = create_matrix()
-print(len(matrix))
+parsed_matrix = parse_matrix(matrix)
 
-pretty_print(matrix)
+pretty_print(parsed_matrix)
     
 
 
