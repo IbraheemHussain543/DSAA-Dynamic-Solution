@@ -42,7 +42,7 @@ def score_schedule(schedule):
 
     return total_time, total_cost, total_enjoyment 
 
-def check_schedule(schedule, constraint, max_score, best_schedule, allowed_time, allowed_cost): 
+def check_schedule(schedule, max_score, best_schedule, allowed_time, allowed_cost): 
     time, cost, enjoyment = score_schedule(schedule) 
     #check if schedule has highest happieness so far 
     if enjoyment > max_score: 
@@ -68,7 +68,6 @@ def check_schedule(schedule, constraint, max_score, best_schedule, allowed_time,
 
 def power_set(list): 
     #define constraints and placeholders for best schedule
-    constraint = "both"
     allowed_time = int(data[1]) 
     allowed_cost = int(data[2])   
     max_score = 0 
@@ -83,20 +82,24 @@ def power_set(list):
             subset = subset + [i] 
             subsets.append(subset) 
 
-            max_score, best_schedule = check_schedule(subset, constraint, max_score, best_schedule, allowed_time, allowed_cost)
+            max_score, best_schedule = check_schedule(subset, max_score, best_schedule, allowed_time, allowed_cost)
 
         result.extend(subsets) 
 
     return best_schedule
 
-data = load_input("input_small.txt") 
-#lookup table of all activities 
-activities = data[3] 
-#generate powersets from the activities and check values for best one 
-best_schedule = power_set(activities) 
+def main(file_name, picked_constraint):
+    global data, activities, constraint
+    data = load_input(file_name) 
+    constraint = picked_constraint
+    #lookup table of all activities 
+    activities = data[3] 
+    #generate powersets from the activities and check values for best one 
+    best_schedule = power_set(activities) 
 
+    #final results from brute force check     
+    time, cost, enjoyment = score_schedule(best_schedule) 
 
-#final results from brute force check     
-print(best_schedule) 
-time, cost, enjoyment = score_schedule(best_schedule) 
-print(time, cost, enjoyment) 
+    return best_schedule, time, cost, enjoyment
+
+main("input_small.txt", "time")

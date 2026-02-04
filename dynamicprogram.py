@@ -111,28 +111,32 @@ def pretty_print(matrix):
 
 
         
+def main(file_name, chosen):
+    #load input file
+    global matrix, activities, constraint, num_acts
+    num_acts, time_allowed, cost_allowed, activities = load_input(file_name) 
 
-#load input file
-num_acts, time_allowed, cost_allowed, activities = load_input("input_1000.txt") 
+    if chosen in ["time", "t", "Time", "T"]:
+        constraint = ["Time", time_allowed, 0] #this structure contains the name of the constraint, its value, its index in each activities dictionary
+    else:
+        constraint = ["Cost", cost_allowed, 1]
 
-chosen = input("Choose time or cost as a constraint: ")
-if chosen in ["time", "t", "Time", "T"]:
-    constraint = ["Time", time_allowed, 0] #this structure contains the name of the constraint, its value, its index in each activities dictionary
-else:
-    constraint = ["Cost", cost_allowed, 1]
+    #warning to ensure file is formated correctly
+    if num_acts != len(activities):
+        print("WARNING: File is claiming different number of activities to what was found, are you missing an empty line at the end or is there another formatting issue?")
 
-#warning to ensure file is formated correctly
-if num_acts != len(activities):
-    print("WARNING: File is claiming different number of activities to what was found, are you missing an empty line at the end or is there another formatting issue?")
+    matrix = create_matrix()
+    filled_matrix = fill_matrix(matrix)
 
-print("\n" + constraint[0] + " constraint with a maximum of " + str(constraint[1]) + "\n") 
+    optimal_schedule = extract_solution(filled_matrix)
+    total_time, total_cost, total_enjoyment = score_schedule(optimal_schedule)
 
-matrix = create_matrix()
-filled_matrix = fill_matrix(matrix)
+    #for main function to fill in important variables in output
+    constraint_info = [time_allowed, cost_allowed, constraint[0]]
 
-optimal_schedule = extract_solution(matrix)
-total_time, total_cost, total_enjoyment = score_schedule(optimal_schedule)
-print(f"Best schedule is {optimal_schedule} with enjoyment of {total_enjoyment}, cost of {total_cost} and time of {total_time} \n")
+    return optimal_schedule, total_time, total_cost, total_enjoyment, constraint_info
+
+
     
 
 
