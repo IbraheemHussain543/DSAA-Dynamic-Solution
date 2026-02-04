@@ -60,20 +60,38 @@ def fill_matrix(matrix):
             
             #or take this item (if it fits)
             if col >= cost:
+                #add best from knapsack with the remaining allowance to value
                 take = matrix[row - 1][col - cost] + value
             else:
                 take = 0
             
             #choose the better option
             matrix[row][col] = max(skip, take)
-    
     return matrix
 
 def extract_solution(matrix):
-    rows = len(matrix)   
+    optimal_schedule = []
+    keys = list(activities.keys())
+    rows = len(keys) + 1
     cols = len(matrix[0])
 
+    #start at the last value in the table
+    curr_row = rows-1
+    curr_col = cols-1
 
+    while curr_row > 0:
+        curr_joy = matrix[curr_row][curr_col]
+        above_joy = matrix[curr_row-1][curr_col]
+        #if theres a change this means the current activity is included in the optimal schedule
+        if curr_joy != above_joy:
+            optimal_schedule.append(keys[curr_row-1])
+            #offset the column we are on by the cost of the activity we just added
+            curr_col -= int(activities[keys[curr_row-1]][constraint[2]])
+        curr_row -= 1
+    return optimal_schedule
+
+
+#debug function to display tables in a neat fashion, breaks when either rows or columns are too high
 def pretty_print(matrix):
     keys = list(activities.keys())
     #top line helping with visuals and labelling
@@ -82,23 +100,22 @@ def pretty_print(matrix):
     for index in range(0, len(keys) + 1):
         if index == 0:
             #turns all the elements in the array into a long string with each of them having a 4 space block reserved
-            row_str = " ".join(f"{cell:<4}" for cell in matrix[index])
+            row_str = " ".join(f"{cell:<8}" for cell in matrix[index])
             #the <20 ensure neat formatting by creating a 20 character space for reserved for each variable
             print(f"{" ":<20} {"":<10} {" ":<10} {row_str}")
         else:
             #all other activities after row 0 must have an activity on their left with its constraint value and enjoyment displayed
             curr_act = keys[index-1]
-            row_str = " ".join(f"{cell:<4}" for cell in matrix[index])
+            row_str = " ".join(f"{cell:<8}" for cell in matrix[index])
             print(f"{curr_act:<20} {activities[curr_act][constraint[2]]:<10} {activities[curr_act][2]:<10} {row_str}")
 
 
         
 
 #load input file
-num_acts, time_allowed, cost_allowed, activities = load_input("input_custom.txt") 
+num_acts, time_allowed, cost_allowed, activities = load_input("input_custom_2.txt") 
 
-#chosen = input("Choose time or cost as a constraint: ")
-chosen = "time"
+chosen = input("Choose time or cost as a constraint: ")
 if chosen in ["time", "t", "Time", "T"]:
     constraint = ["Time", time_allowed, 0] #this structure contains the name of the constraint, its value, its index in each activities dictionary
 else:
@@ -113,9 +130,9 @@ print("\n" + constraint[0] + " constraint with a maximum of " + str(constraint[1
 matrix = create_matrix()
 filled_matrix = fill_matrix(matrix)
 
-pretty_print(filled_matrix)
-print(" ")
-print(filled_matrix)
+optimal_schedule = extract_solution(matrix)
+total_time, total_cost, total_enjoyment = score_schedule(optimal_schedule)
+print(f"Best schedule is {optimal_schedule} with enjoyment of {total_enjoyment}, cost of {total_cost} and time of {total_time} \n")
     
 
 
