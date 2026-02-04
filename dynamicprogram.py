@@ -91,7 +91,7 @@ def extract_solution(matrix):
     return optimal_schedule
 
 
-#debug function to display tables in a neat fashion, breaks when either rows or columns are too high
+#debug function to display tables in a neat fashion, not suitable when either rows or columns are too high
 def pretty_print(matrix):
     keys = list(activities.keys())
     #top line helping with visuals and labelling
