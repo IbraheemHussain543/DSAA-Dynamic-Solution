@@ -113,7 +113,7 @@ def pretty_print(matrix):
         
 
 #load input file
-num_acts, time_allowed, cost_allowed, activities = load_input("input_custom_2.txt") 
+num_acts, time_allowed, cost_allowed, activities = load_input("input_1000.txt") 
 
 chosen = input("Choose time or cost as a constraint: ")
 if chosen in ["time", "t", "Time", "T"]:
