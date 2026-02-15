@@ -95,7 +95,7 @@ def extract_solution(matrix):
 def pretty_print(matrix):
     keys = list(activities.keys())
     #top line helping with visuals and labelling
-    print(f"{" ":<20} {constraint[0]:<10} {"Enjoyment":<10} {" "}")
+    print(f'{" ":<20} {constraint[0]:<10} {"Enjoyment":<10} {" "}')
     #for each line show the assigned activity except the first which has no activies
     for index in range(0, len(keys) + 1):
         if index == 0:
