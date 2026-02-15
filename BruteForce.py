@@ -45,15 +45,15 @@ def score_schedule(schedule):
 def check_schedule(schedule, max_score, best_schedule, allowed_time, allowed_cost): 
     time, cost, enjoyment = score_schedule(schedule) 
     #check if schedule has highest happieness so far 
-    if enjoyment > max_score: 
+    if enjoyment > max_score or (enjoyment == max_score and time < score_schedule(best_schedule)[0]):
 
         #ensure the schedule follows selected constraint and if so make it new best schedule 
-        if constraint == "time": 
+        if constraint.lower() == "time": 
             if time <= allowed_time: 
                 best_schedule = schedule 
                 max_score = enjoyment 
 
-        elif constraint == "cost": 
+        elif constraint.lower() == "cost": 
             if cost <= allowed_cost: 
                 best_schedule = schedule 
                 max_score = enjoyment 
