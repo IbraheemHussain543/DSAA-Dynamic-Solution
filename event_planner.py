@@ -151,7 +151,7 @@ def main():
             start_output = starter_info(input_file, constraint_info)
             dp_output = run_dp(input_file, constraint)
             print(start_output)
-            print(dp_output)
+            print(dp_output[0])
         else:
             compare(input_file, constraint)
         
