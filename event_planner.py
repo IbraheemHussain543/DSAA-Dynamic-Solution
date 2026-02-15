@@ -149,8 +149,9 @@ def main():
             print(bf_output)
         elif choice in ["dp", "dynamic", "dynamic approach", "dynamic program", "d", "Dynamic Program", "Dynamic Approach"]:
             start_output = starter_info(input_file, constraint_info)
-            run_dp(input_file, constraint)
+            dp_output = run_dp(input_file, constraint)
             print(start_output)
+            print(dp_output)
         else:
             compare(input_file, constraint)
         
