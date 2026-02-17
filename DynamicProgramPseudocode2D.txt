@@ -1,0 +1,145 @@
+-- DynamicProgram Pseudocode --
+
+Purpose: Solve a knapsack-like scheduling problem with either a single constraint
+(time or cost) or two constraints (time and cost) using dynamic programming.
+
+Global data structures:
+
+path constant BASE_DIR
+integer variable activities
+list variable matrix
+list variable constraint
+dictionary variable events
+
+BASE_DIR: path to inputs
+activities = 
+matrix: []
+constraint = describes which constraint(s) are used and their values
+events = {}
+
+function load_input(filename):
+	open the input file at BASE_DIR/inputs/filename
+	read lines
+    strip trailing empty line
+	activities_count = integer lines[0]
+	time_allowed, cost_allowed = lines[1]
+	activities = {}
+	for each remaining line do
+		split line into: id, time, cost, enjoyment
+		events[id] = (time, cost, enjoyment)
+	return activities_count, time_allowed, cost_allowed, activities
+
+function score_schedule(schedule):
+
+	if schedule is empty then 
+        return (0, 0, 0)
+
+    integer variable total_time
+    integer variable total_cost
+    integer variable total_enjoyment
+    integer variable no_acts
+
+	total_time = total_cost = total_enjoyment = 0
+	no_acts = length of schedule
+
+    for each activity_id in schedule do
+		t, c, v = activities[activity_id]
+		increment total_time by t
+		increment total_cost by c
+		increment total_enjoyment by v
+
+	return total_time, total_cost, total_enjoyment
+
+function create_matrix():
+
+	integer variable time_allowed
+	integer variable cost_allowed
+	integer variable limit
+
+	if constraint type is "Both" then
+		time_allowed, cost_allowed = constraint values
+		create a 3D list of zeros with dimensions (num_acts+1) x (time_allowed+1) x (cost_allowed+1)
+		return 3D matrix
+	else do
+		limit = constraint value (time or cost)
+		create a 2D list (num_acts+1) x (limit+1) filled with zeros
+		return 2D matrix
+
+function fill_matrix(matrix):
+	keys = list of activity ids in insertion order
+	rows = len(keys) + 1
+	if constraint type is "Both" then
+		time_allowed, cost_allowed = constraint values
+		for row from 1 to rows-1 do
+			act_time, act_cost, value = activities[keys[row-1]]
+			for t from 0 to time_allowed do
+				for c from 0 to cost_allowed do
+					skip = matrix[row-1][t][c]
+					take = 0
+					if t >= act_time and c >= act_cost then
+						take = matrix[row-1][t - act_time][c - act_cost] + value
+					matrix[row][t][c] = max(skip, take)
+	else do  # single constraint (either Time or Cost)
+		cols = number of columns in matrix (limit+1)
+		cost_index = constraint[2]  # index of the attribute used as cost/time in activity tuple
+		for row from 1 to rows-1 do
+			act_cost_or_time = int(activities[keys[row-1]][cost_index])
+			value = int(activities[keys[row-1]][2])  # enjoyment
+			for col from 1 to cols-1 do
+				skip = matrix[row-1][col]
+				take = 0
+				if col >= act_cost_or_time then
+					take = matrix[row-1][col - act_cost_or_time] + value
+				matrix[row][col] = max(skip, take)
+	return matrix
+
+function extract_solution(matrix):
+	optimal_schedule = []
+	keys = list of activity ids
+	rows = len(keys) + 1
+	if constraint type is "Both" then
+		curr_t, curr_c = time_allowed, cost_allowed
+		for curr_row from rows-1 down to 1 do
+			if matrix[curr_row][curr_t][curr_c] != matrix[curr_row-1][curr_t][curr_c] then
+				optimal_schedule.append(keys[curr_row-1])
+				subtract the activity's time and cost from curr_t and curr_c
+	else do
+		curr_row = rows - 1
+		curr_col = number_of_columns - 1
+		while curr_row > 0:
+			if matrix[curr_row][curr_col] != matrix[curr_row-1][curr_col] then
+				optimal_schedule.append(keys[curr_row-1])
+				curr_col -= int(activities[keys[curr_row-1]][constraint[2]])
+			curr_row -= 1
+	return optimal_schedule
+
+function pretty_print(matrix):
+	(optional) print header row with constraint name and "Enjoyment"
+	for each row index from 0 to number_of_rows-1 do
+		if row is 0 then
+			print header/column values
+		else do
+			print activity id, its constraint value, enjoyment, and row values
+
+function main(file_name, chosen):
+
+	set global variables: matrix, activities, constraint, num_acts
+	num_acts, time_allowed, cost_allowed, activities = load_input(file_name)
+	
+	if chosen indicates Time then
+		constraint = ["Time", time_allowed, 0]
+	else if chosen indicates Both then
+		constraint = ["Both", (time_allowed, cost_allowed), None]
+	else do
+		constraint = ["Cost", cost_allowed, 1]
+
+	if num_acts != len(activities) then
+		print a warning about input formatting
+
+	matrix = create_matrix()
+	filled_matrix = fill_matrix(matrix)
+	optimal_schedule = extract_solution(filled_matrix)
+
+	total_time, total_cost, total_enjoyment = score_schedule(optimal_schedule)
+	constraint_info = [time_allowed, cost_allowed, constraint[0]]
+	return optimal_schedule, total_time, total_cost, total_enjoyment, constraint_info, activities
