@@ -102,7 +102,7 @@ def pretty_print(matrix):
             #turns all the elements in the array into a long string with each of them having a 4 space block reserved
             row_str = " ".join(f"{cell:<8}" for cell in matrix[index])
             #the <20 ensure neat formatting by creating a 20 character space for reserved for each variable
-            print(f"{" ":<20} {"":<10} {" ":<10} {row_str}")
+            print(f"{'':<20} {'':<10} {'':<10} {row_str}")
         else:
             #all other activities after row 0 must have an activity on their left with its constraint value and enjoyment displayed
             curr_act = keys[index-1]
